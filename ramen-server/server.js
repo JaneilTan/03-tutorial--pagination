@@ -11,8 +11,23 @@ server.use(express.json());
 
 server.get("/api/reviews", async (req, res) => {
   try {
-    const reviews = await reviewsRepo.getAllReviews();
-    return res.json(reviews);
+    const { limit, page } = req.query;
+
+    const safeLimit = Boolean(limit) ? parseInt(limit) : 10;
+    const safePage = Boolean(parseInt(page)) ? parseInt(page) : 1;
+    
+    const allReviews = await reviewsRepo.getAllReviews();
+    const reviews = await reviewsRepo.getPagedReviews(safeLimit, safePage);
+
+    const pageResult = {
+      reviews,
+      currentPage: safePage,
+      itemsPerPage: safeLimit,
+      totalItems: allReviews.length,
+      totalPages: Math.ceil(allReviews.length / safeLimit)
+    };
+
+    return res.json(pageResult);
   } catch (e) {
     console.error(e);
     return res.json({ error: e.message || e });

@@ -1,12 +1,11 @@
 import ReviewCard from "./ReviewCard";
 import "./ReviewList.css";
 
-const ReviewList = ({ counter, reviews }) => {
-  const limitedArray = reviews.slice(0, counter);
+const ReviewList = ({ reviews }) => {
 
   return (
     <div className="review-list">
-      {limitedArray.map((review, index) => {
+      {reviews.map((review, index) => {
         return <ReviewCard key={index} review={review} />;
       })}
     </div>
